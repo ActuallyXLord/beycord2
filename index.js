@@ -312,9 +312,45 @@ client.on('messageCreate', async (message) => {
 
 client.on('error', err => console.error('Client error:', err));
 
+//Emoji remapper: the bot's custom emojis used to live on another author's servers. After running ;emojisetup
+//they exist as emojis owned by this bot, and every outgoing request has the old ids swapped for the new ones.
+client.emojiMap = {};
+const EMOJI_RE = /<(a?):([A-Za-z0-9_]+):(\d{15,})>/g;
+function remapEmojis(value, seen, depth){
+    if(typeof value === "string") return value.replace(EMOJI_RE, (m, a, n, id) => client.emojiMap[id] ? `<${a}:${client.emojiMap[id].name}:${client.emojiMap[id].id}>` : m);
+    if(!value || typeof value !== "object" || depth > 8 || Buffer.isBuffer(value) || value instanceof Uint8Array) return value;
+    if(seen.has(value)) return value;
+    seen.add(value);
+    for(const key of Object.keys(value)){
+        const v = value[key];
+        if(typeof v === "string" || (v && typeof v === "object")){
+            try{ value[key] = remapEmojis(v, seen, depth + 1); }catch(e){}
+        }
+    }
+    return value;
+}
+const origRequest = client.requestHandler.request.bind(client.requestHandler);
+client.requestHandler.request = function(method, url, auth, body, ...rest){
+    if(body && typeof body === "object" && Object.keys(client.emojiMap).length){
+        try{ body = remapEmojis(body, new WeakSet(), 0); }catch(e){ console.error("emoji remap failed:", e); }
+    }
+    return origRequest(method, url, auth, body, ...rest);
+};
+client.loadEmojiMap = async function(){
+    try{
+        const doc = await mongo.db("main").collection("settings").findOne({_id: "emojimap"});
+        client.emojiMap = (doc && doc.map) || {};
+        console.log(`Loaded ${Object.keys(client.emojiMap).length} emoji mappings.`);
+    }catch(err){
+        console.error("Could not load the emoji map, retrying in 5s:", err.message);
+        setTimeout(() => client.loadEmojiMap(), 5000);
+    }
+};
+
 //Client
 client.on('ready', () => {
     console.log('Beycord is online.');
+    client.loadEmojiMap();
     client.editStatus({name: `with Beyblades in ${client.guilds.size} servers! | ;prefix`});
 });
 
