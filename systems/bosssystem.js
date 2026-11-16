@@ -21,7 +21,7 @@ async function start(client, message, prefix, player, db, boss){
         join.author.atk = 21;
         join.author.stamina = 3;
         join.author.sp = 3;
-        join.author.sd = stats.beys[stats.main].sd || "Right";
+        join.author.sd = (v => (v === 1 || v === "Left") ? "Left" : "Right")(stats.beys[stats.main].sd);
         if(stats.beys[stats.main].name === "Guardian Kerbeus Red Ver. <:haoyunshu:669481031400816650>") stats.beys[stats.main].name = "Guardian Kerbeus Red Ver. HYS";
         join.author.bey = new (client.beys.get(stats.beys[stats.main].name))(join.author.id, stats.beys[stats.main].id,stats.beys[stats.main]);
         join.author.lvl = stats.beys[stats.main].level;
@@ -30,8 +30,8 @@ async function start(client, message, prefix, player, db, boss){
         if(join.author.stamina > 10) join.author.stamina = 10;
         if(join.author.bey.type === "Stamina") join.author.stamina = join.author.stamina + 2;
         if(join.author.bey.type === "Balance") join.author.stamina = join.author.stamina + 1;
-        if(join.author.bey.sd === "Right") join.author.atk = join.author.atk + 2;
-        if(join.author.bey.sd === "Left") join.author.stamina = join.author.stamina + 1;
+        if(join.author.sd === "Right") join.author.atk = join.author.atk + 2;
+        if(join.author.sd === "Left") join.author.stamina = join.author.stamina + 1;
         join.author.maxstamina = join.author.stamina;
         join.author.maxhp = join.author.hp;
         join.author.wins = stats.wins;
