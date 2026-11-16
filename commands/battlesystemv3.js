@@ -417,12 +417,21 @@ module.exports.run = async (client, message, args, player, prefix, opponent1, op
     stats2.beys[stats2.main].level = opponent1.lvl;
     opponent2.bey = opponent1.bey;
   }
-  let jimps = [];
-  let versus = "https://media.discordapp.net/attachments/859836946510643210/860584653463617566/versus.png?width=487&height=498";
-  let chance = Math.round(Math.random() * 100);
-  if(chance < 11) versus = "https://media.discordapp.net/attachments/859836946510643210/860584641245347901/menacing2.png";
-  let images = ["https://cdn.discordapp.com/attachments/859836946510643210/898329244290142288/PicsArt_10-14-04.59.27.png",versus,opponent1.bey.image,opponent2.bey.image]; 
-  for(var i = 0; i < images.length; i++) jimps.push(jimp.read(images[i]));
+  const beyCard = (src, label) => jimp.read(/wikia\.nocookie\.net/.test(src) && !/format=original/.test(src) ? src + (src.includes("?") ? "&" : "?") + "format=original" : src).catch(async () => {
+    let img = new jimp(700, 700, 0x2b2d31ff);
+    const font = await jimp.loadFont(jimp.FONT_SANS_64_WHITE);
+    img.print(font, 0, 0, {text: label, alignmentX: jimp.HORIZONTAL_ALIGN_CENTER, alignmentY: jimp.VERTICAL_ALIGN_MIDDLE}, 700, 700);
+    return img;
+  });
+  const assetsDir = require("path").join(__dirname, "..");
+  const makeBackground = () => jimp.read(require("path").join(assetsDir, "background.jpg")).catch(() => new jimp(1950, 1000, 0x1a1a2eff));
+  const makeVersus = () => jimp.read(require("path").join(assetsDir, "versus.png")).catch(async () => {
+    let img = new jimp(300, 300, 0x00000000);
+    const font = await jimp.loadFont(jimp.FONT_SANS_128_WHITE);
+    img.print(font, 0, 0, {text: "VS", alignmentX: jimp.HORIZONTAL_ALIGN_CENTER, alignmentY: jimp.VERTICAL_ALIGN_MIDDLE}, 300, 300);
+    return img;
+  });
+  let jimps = [makeBackground(), makeVersus(), beyCard(opponent1.bey.image, opponent1.bey.name), beyCard(opponent2.bey.image, opponent2.bey.name)];
   Promise.all(jimps).then(data => {
     return Promise.all(jimps);
   }).then(async data => {
@@ -435,7 +444,7 @@ module.exports.run = async (client, message, args, player, prefix, opponent1, op
     data[0].write(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, () => {
       console.log("Image written!")
     });
-  });
+  }).catch(err => console.error("Battle image failed:", err));
   let health1 = (stats1.beys[stats1.main].level-1) * 9.1;
   let stamina1 = (stats1.beys[stats1.main].level-1) * 0.051;
   let health2 = (stats2.beys[stats2.main].level-1) * 9.1;
