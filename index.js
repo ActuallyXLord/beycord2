@@ -17,6 +17,8 @@ mongo.connect((err) => {
 
 process.on('unhandledRejection', err => console.error('Unhandled rejection:', err));
 
+fs.mkdirSync('/tmp/tempimages', {recursive: true});
+
 //HANDLERS ####################################################################################
 
 //Discord.Collection Clients Adder
@@ -307,6 +309,8 @@ client.on('messageCreate', async (message) => {
         }
     }
 });
+
+client.on('error', err => console.error('Client error:', err));
 
 //Client
 client.on('ready', () => {
