@@ -139,7 +139,7 @@ client.on('messageCreate', async (message) => {
     if(!message.guild) return;
     const db = mongo.db("main");
     const testForNumber = Math.floor(Math.random() * 30);
-    const testForNumber2 = Math.floor(Math.random()*1000);
+    const testForNumber2 = Math.floor(Math.random()*200);
     const raritytest = Math.floor(Math.random() * 30)
     
     //Configuration
@@ -177,7 +177,7 @@ client.on('messageCreate', async (message) => {
     }
 
     if(testForNumber2 === 0){
-        client.bosssystems.get('bosssystem').run(message, prefix, db, client)
+        client.bosssystems.get('bosssystem').run(client, message, prefix, null, db).catch(err => console.error('Boss spawn failed:', err))
     }
     
     let info = await db.collection("users").findOne({_id: message.author.id}, {_id: 0, beys: 1, main: 1});
