@@ -27,6 +27,7 @@ async function othercode(){
   });
 
   setInterval(() => {
+    if(!datas[bname]) return;
     mongo.db("main").collection("ids").updateOne({_id: bname}, {$set: {latest: datas[bname].latest}});
   }, 600000);
 }
