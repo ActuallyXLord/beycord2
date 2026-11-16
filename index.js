@@ -15,10 +15,12 @@ mongo.connect((err) => {
     console.log("Connection to MongoDB database established successfully!");
 });
 
+process.on('unhandledRejection', err => console.error('Unhandled rejection:', err));
+
 //HANDLERS ####################################################################################
 
 //Discord.Collection Clients Adder
-const client = new Eris(process.env.TOKEN, {restMode:true, maxShards: "auto", intents: ['guilds','guildsMembers','guildBans','guildEmojis','guildIntegrations','guildWebhooks','guildInvites','guildVoiceStates','guildPresenses','guildIntegrations','guildMessages','guildMessageReactions','guildMessageTyping','directMessages','directMessageReactions','directMessageTyping']});
+const client = new Eris(process.env.TOKEN, {restMode:true, maxShards: "auto", intents: [32768,'guilds','guildsMembers','guildBans','guildEmojis','guildIntegrations','guildWebhooks','guildInvites','guildVoiceStates','guildPresenses','guildIntegrations','guildMessages','guildMessageReactions','guildMessageTyping','directMessages','directMessageReactions','directMessageTyping']});
 client.commands = new (Discord.Collection || Map)();
 client.beys = new (Discord.Collection || Map)();
 client.parts = new (Discord.Collection || Map)();
@@ -132,6 +134,7 @@ for (const file of partFiles) {
 
 //On Message Create
 client.on('messageCreate', async (message) => {
+    if(!message.guild) return;
     const db = mongo.db("main");
     const testForNumber = Math.floor(Math.random() * 30);
     const testForNumber2 = Math.floor(Math.random()*1000);
@@ -144,7 +147,8 @@ client.on('messageCreate', async (message) => {
     }
     let guild = await db.collection("guilds").findOne({_id: message.guild.id});
     if(!guild){
-        db.collection("guilds").insertOne({_id: message.guild.id,redirect: "nothing",prefix: ";",bey: "nothing",type: "nothing",answer: "number",disabled: []});
+        guild = {_id: message.guild.id,redirect: "nothing",prefix: ";",bey: "nothing",type: "nothing",answer: "number",disabled: []};
+        await db.collection("guilds").insertOne(guild);
     }
     let prefix = guild.prefix;
     

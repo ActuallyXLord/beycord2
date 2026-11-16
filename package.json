@@ -25,7 +25,7 @@
     "@top-gg/sdk": "^3.1.2",
     "discord.js": "^13.2.0",
     "dotenv": "^8.2.0",
-    "eris": "github:Catboi8/eris#interactions",
+    "eris": "^0.17.2",
     "eris-additions": "^1.4.1",
     "eris-reactions": "^0.1.4",
     "eris-sharder": "^1.10.0",
