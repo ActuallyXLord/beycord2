@@ -406,8 +406,8 @@ module.exports.run = async (client, message, args, player, prefix, opponent1, op
   opponent2.stability = 100;
   opponent1.sp = 0;
   opponent2.sp = 0;
-  opponent1.sd = stats1.beys[stats1.main].sd || "Right";
-  opponent2.sd = stats2.beys[stats2.main].sd || "Right";
+  opponent1.sd = (v => (v === 1 || v === "Left") ? "Left" : "Right")(stats1.beys[stats1.main].sd);
+  opponent2.sd = (v => (v === 1 || v === "Left") ? "Left" : "Right")(stats2.beys[stats2.main].sd);
   opponent1.bey = new (client.beys.get(stats1.beys[stats1.main].name))(opponent1.id, stats1.beys[stats1.main].id,stats1.beys[stats1.main]);
   opponent2.bey = new (client.beys.get(stats2.beys[stats2.main].name))(opponent2.id, stats2.beys[stats2.main].id,stats2.beys[stats2.main]);
   opponent1.lvl = stats1.beys[stats1.main].level;
