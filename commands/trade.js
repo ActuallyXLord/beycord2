@@ -58,12 +58,12 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
     data[2].resize(700,700);
     data[0].composite(data[1], 100, 240);
     data[0].composite(data[2], 1150, 240);
-    data[0].write(`/path/to/tempimages/${message.author.id}-${tuser.id}trade.png`, () => {
+    data[0].write(`/tmp/tempimages/${message.author.id}-${tuser.id}trade.png`, () => {
       console.log("Image written!")
     });
   });
   //let wait = await client.delay(1500);
-  let tradeimage = fs.readFileSync(`/path/to/tempimages/${message.author.id}-${tuser.id}trade.png`);
+  let tradeimage = fs.readFileSync(`/tmp/tempimages/${message.author.id}-${tuser.id}trade.png`);
   let embed = new Discord.MessageEmbed()
   .setDescription(`${message.member.effectiveName} is trading a ***Level ${bey1.level} ${bey1.name}*** for ${tuser.effectiveName}'s ***Level ${bey2.level} ${bey2.name}***.\n\nThe trade will proceed once both players have confirmed the trade by reacting to this message with a ✅. React with ❌ to cancel the trade immediately when it's your turn.\nWaiting for <@${message.author.id}> to react...\n\n**Price:** <:valtz:899373217255407646>${cost} (Will be splitted)`)
   .setColor("#7f7fff")

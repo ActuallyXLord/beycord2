@@ -25,14 +25,14 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
                 data[0].resize(400, 390);
                 data[2].composite(data[0], 55, 65);
                 data[2].composite(data[1], 0, 0);
-                let written = await data[2].writeAsync(`/path/to/tempimages/${message.author.id}gen2.png`);
+                let written = await data[2].writeAsync(`/tmp/tempimages/${message.author.id}gen2.png`);
             });
 
             //HERE IT IS OFFICER RIGHT BELOW THIS >:(
 
         //    let wait = await client.delay(5000);
             let gen2image;
-            try{gen2image = fs.readFileSync(`/path/to/tempimages/${message.author.id}gen2.png`)}catch(err){message.channel.createMessage(`*Upgrade failed!* Please try again.`);db.collection("users").updateOne({_id: message.author.id}, {$set: {stars: stats.stars - 1}});gen2image = null;};
+            try{gen2image = fs.readFileSync(`/tmp/tempimages/${message.author.id}gen2.png`)}catch(err){message.channel.createMessage(`*Upgrade failed!* Please try again.`);db.collection("users").updateOne({_id: message.author.id}, {$set: {stars: stats.stars - 1}});gen2image = null;};
             if(gen2image){
             let embed = new Discord.MessageEmbed()
             .setTitle(`${main.bbname || main.name} is now upgraded to Generation 2!`)
@@ -40,7 +40,7 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
             .setImage(`attachment://${message.author.id}gen2.png`)
             .setTimestamp();
             let msg = await message.channel.createMessage({embed: embed}, {file: gen2image, name: `${message.author.id}gen2.png`});
-            fs.unlink(`/path/to/tempimages/${message.author.id}gen2.png`, (err) => {
+            fs.unlink(`/tmp/tempimages/${message.author.id}gen2.png`, (err) => {
                 if(err) console.log(err);
               });
             stats.beys[stats.main].image = msg.embeds[0].image.url;
@@ -70,11 +70,11 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
                     data[2].composite(data[0], 55, 65);
                 }
                 data[2].composite(data[1], 0, 0);
-                let written = await data[2].writeAsync(`/path/to/tempimages/${message.author.id}gen3.png`);
+                let written = await data[2].writeAsync(`/tmp/tempimages/${message.author.id}gen3.png`);
             });
         //    let wait2 = await client.delay(5000);
             let gen3image;
-            try{gen3image = fs.readFileSync(`/path/to/tempimages/${message.author.id}gen3.png`)}catch(err){message.channel.createMessage(`*Upgrade failed!* Please try again.`);db.collection("users").updateOne({_id: message.author.id}, {$set: {stars: stats.stars - 1}});gen3image = null;};
+            try{gen3image = fs.readFileSync(`/tmp/tempimages/${message.author.id}gen3.png`)}catch(err){message.channel.createMessage(`*Upgrade failed!* Please try again.`);db.collection("users").updateOne({_id: message.author.id}, {$set: {stars: stats.stars - 1}});gen3image = null;};
             if(gen3image){
             let embed2 = new Discord.MessageEmbed()
             .setTitle(`${main.bbname || main.name} is now upgraded to Generation 3!`)
@@ -82,7 +82,7 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
             .setImage(`attachment://${message.author.id}gen3.png`)
             .setTimestamp();
             let msg2 = await message.channel.createMessage({embed: embed2}, {file: gen3image, name: `${message.author.id}gen3.png`});
-            fs.unlink(`/path/to/tempimages/${message.author.id}gen3.png`, (err) => {
+            fs.unlink(`/tmp/tempimages/${message.author.id}gen3.png`, (err) => {
                 if(err) console.log(err);
               });
             stats.beys[stats.main].image = msg2.embeds[0].image.url;
@@ -112,11 +112,11 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
                     data[2].composite(data[0], 55, 65);
                     data[2].composite(data[1], 0, 0);
                 }
-                let written = await data[2].writeAsync(`/path/to/tempimages/${message.author.id}gen4.png`);
+                let written = await data[2].writeAsync(`/tmp/tempimages/${message.author.id}gen4.png`);
             });
         //    let wait3 = await client.delay(5000);
             let gen4image;
-            try{gen4image = fs.readFileSync(`/path/to/tempimages/${message.author.id}gen4.png`)}catch(err){message.channel.createMessage(`*Upgrade failed!* Please try again.`);db.collection("users").updateOne({_id: message.author.id}, {$set: {stars: stats.stars - 1}});gen4image = null;};
+            try{gen4image = fs.readFileSync(`/tmp/tempimages/${message.author.id}gen4.png`)}catch(err){message.channel.createMessage(`*Upgrade failed!* Please try again.`);db.collection("users").updateOne({_id: message.author.id}, {$set: {stars: stats.stars - 1}});gen4image = null;};
             if(gen4image){
             let embed3 = new Discord.MessageEmbed()
             .setTitle(`${main.bbname || main.name} is now upgraded to Generation 4!`)
@@ -124,7 +124,7 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
             .setImage(`attachment://${message.author.id}gen4.png`)
             .setTimestamp();
             let msg3 = await message.channel.createMessage({embed: embed3}, {file: gen4image, name: `${message.author.id}gen4.png`});
-            fs.unlink(`/path/to/tempimages/${message.author.id}gen4.png`, (err) => {
+            fs.unlink(`/tmp/tempimages/${message.author.id}gen4.png`, (err) => {
                 if(err) console.log(err);
               });
             stats.beys[stats.main].image = msg3.embeds[0].image.url;
@@ -154,13 +154,13 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
                     data[2].composite(data[0], 55, 65);
                     data[2].composite(data[1], 0, 0);
                 }
-                let written = await data[2].writeAsync(`/path/to/tempimages/${message.author.id}gen5.png`);
+                let written = await data[2].writeAsync(`/tmp/tempimages/${message.author.id}gen5.png`);
             });
         //    let wait4 = await client.delay(5000);
 
             /*//
             let encoder = new gifencoder(524, 524);
-            encoder.createReadStream().pipe(fs.createWriteStream(`/path/to/tempimages/${message.author.id}gen5.gif`));
+            encoder.createReadStream().pipe(fs.createWriteStream(`/tmp/tempimages/${message.author.id}gen5.gif`));
             encoder.start()
             encoder.setRepeat(0);
             encoder.setDelay(83);
@@ -170,7 +170,7 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
             let ctx = canvas.getContext("2d");
             let count = 0;
 
-            loadImage(`/path/to/tempimages/${message.author.id}gen5.png`).then((loadedImage) => {
+            loadImage(`/tmp/tempimages/${message.author.id}gen5.png`).then((loadedImage) => {
                 for(var i = 0; i < 6; i++){
                     ctx.drawImage(loadedImage, 5, (5 - (count * 5)));
                     encoder.addFrame(ctx);
@@ -200,7 +200,7 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
             //ABOVE IS THE FAILED GEN 5 GIF CODE!! Fix it if you somehow figure it out lol.
 
             let gen5image;
-            try{gen5image = fs.readFileSync(`/path/to/tempimages/${message.author.id}gen5.png`)}catch(err){message.channel.createMessage(`*Upgrade failed!* Please try again.`);db.collection("users").updateOne({_id: message.author.id}, {$set: {stars: stats.stars - 1}});gen5image = null;};
+            try{gen5image = fs.readFileSync(`/tmp/tempimages/${message.author.id}gen5.png`)}catch(err){message.channel.createMessage(`*Upgrade failed!* Please try again.`);db.collection("users").updateOne({_id: message.author.id}, {$set: {stars: stats.stars - 1}});gen5image = null;};
             if(gen5image){
             let embed4 = new Discord.MessageEmbed()
             .setTitle(`${main.bbname || main.name} is now upgraded to Generation 5!`)
@@ -208,10 +208,10 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
             .setImage(`attachment://${message.author.id}gen5.png`)
             .setTimestamp();
             let msg4 = await message.channel.createMessage({embed: embed4}, {file: gen5image, name: `${message.author.id}gen5.png`});
-            fs.unlink(`/path/to/tempimages/${message.author.id}gen5.gif`, (err) => {
+            fs.unlink(`/tmp/tempimages/${message.author.id}gen5.gif`, (err) => {
                 if(err) console.log(err);
               });
-              fs.unlink(`/path/to/tempimages/${message.author.id}gen5.png`, (err) => {
+              fs.unlink(`/tmp/tempimages/${message.author.id}gen5.png`, (err) => {
                 if(err) console.log(err);
               });
             stats.beys[stats.main].image = msg4.embeds[0].image.url;

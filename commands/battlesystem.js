@@ -38,7 +38,7 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
     .addField(`__**${member2.effectiveName}**__`, `***${opponent2.bey.bbname || opponent2.bey.name}***\nLevel ${opponent2.lvl}\n**HP:** ${Math.round(opponent2.hp)}\n**Stamina:** ${opponent2.stamina.toFixed(1)}\n**Stability:** ${opponent2.stability}%\n**Energy:** ${opponent2.sp}\n**Type:** ${opponent2.bey.type}\n**SD:** ${opponent2.sd}`, true)
     .setImage(`attachment://${opponent1.id}-${opponent2.id}.png`);
 
-    let battleimage = fs.readFileSync(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`);
+    let battleimage = fs.readFileSync(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`);
 
     let be = await client.createMessage(message.channel.id, {embed:embed}, {file: battleimage, name: `${opponent1.id}-${opponent2.id}.png`}).catch(err => {
         player.collection("users").updateOne({_id: opponent1.id}, {$set: {"states.inBattle": false}});
@@ -203,37 +203,37 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
 
     let checkdeath = setInterval(() => {
       if(opponent1.stability <= 0){
-        fs.unlink(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
+        fs.unlink(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
           if(err) console.log(err);
         });
         return end(opponent2, opponent1, "ring-out", player);
       }
       if(opponent1.stamina <= 0){
-        fs.unlink(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
+        fs.unlink(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
           if(err) console.log(err);
         });
         return end(opponent2, opponent1, "survivor", player);
       }
       if(opponent1.hp <= 0){
-        fs.unlink(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
+        fs.unlink(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
           if(err) console.log(err);
         });
         return end(opponent2, opponent1, "burst", player);
       }
       if(opponent2.stability <= 0){
-        fs.unlink(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
+        fs.unlink(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
           if(err) console.log(err);
         });
         return end(opponent1, opponent2, "ring-out", player);
       }
       if(opponent2.stamina <= 0){
-        fs.unlink(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
+        fs.unlink(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
           if(err) console.log(err);
         });
         return end(opponent1, opponent2, "survivor", player);
       }
       if(opponent2.hp <= 0){
-        fs.unlink(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
+        fs.unlink(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
           if(err) console.log(err);
         });
         return end(opponent1, opponent2, "burst", player);
@@ -263,7 +263,7 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
         if(emoji === "🔄") spin(player1, player2, logger, message);
         if(emoji === "✨") charge(player1, player2, logger, message);
         if(emoji === "❌"){
-          fs.unlink(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
+          fs.unlink(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, (err) => {
             if(err) console.log(err);
           });
           end(player2, player1, "cancel", player);
@@ -543,7 +543,7 @@ module.exports.run = async (client, message, args, player, prefix, opponent1, op
       data[0].composite(data[2], 100, 240);
       data[0].composite(data[3], 1150, 240);
       data[0].composite(data[1], 830, 415);
-      data[0].write(`/path/to/tempimages/${opponent1.id}-${opponent2.id}.png`, () => {
+      data[0].write(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, () => {
         console.log("Image written!")
       });
     });
