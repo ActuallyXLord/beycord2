@@ -307,10 +307,12 @@ module.exports.run = async (client, message, prefix, player, db, bosss) => {
     let alertembed = await message.channel.createMessage({embed: alert}).catch(err => {
         return;
     });
-    alertembed.addReaction("emojiName:888867336457715772")
+    if(!alertembed) return;
+    const alertEmoji = (client.emojiMap && client.emojiMap["888867336457715772"]) || {name: "emojiName", id: "888867336457715772"};
+    alertembed.addReaction(`${alertEmoji.name}:${alertEmoji.id}`).catch(err => console.log("Boss alert reaction failed:", err.message));
     let notifs = await ReactionHandler.collectReactions(alertembed, userid => true, {time: 540000});
     notifs.forEach(async reacted => {
-        if(reacted.emoji.id && reacted.emoji.id === "888867336457715772" && !boss.notifs.includes(reacted.userID)){
+        if(reacted.emoji.id && reacted.emoji.id === alertEmoji.id && !boss.notifs.includes(reacted.userID)){
             boss.notifs.push(reacted.userID);
             let dmchannel = await client.getDMChannel(reacted.userID);
             dmchannel.createMessage(`A boss is about to spawn in 1 minute at <#${message.channel.id}>!`).catch(err => console.log(err.stack));

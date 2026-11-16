@@ -6,6 +6,8 @@ module.exports.run = async (message, prefix, db, available, client) => {
   let server = await db.collection("guilds").findOne({_id: message.guild.id});
   if(server.redirect !== "nothing") spawn = await db.collection("channels").findOne({_id: server.redirect}) || {_id: message.channel.id, bey: "nothing", type: "nothing", answer: "number", settings: {spawn: true, dcommands: []}};
   else spawn = await db.collection("channels").findOne({_id: message.channel.id}) || {_id: message.channel.id, bey: "nothing", type: "nothing", answer: "number", settings: {spawn: true, dcommands: []}};
+  available = available.filter(name => client.beys.has(name));
+  if(available.length === 0) return;
   let result = Math.floor(Math.random() * available.length);
   let selected = available[result];
   let cons = client.beys.get(selected);
