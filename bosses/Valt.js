@@ -1,7 +1,7 @@
 class AoiValt {
     constructor(){
         this.name = "Aoi Valt";
-        this.image = "https://cdn.discordapp.com/attachments/490783690323001345/770248873657499648/valtimage.png";
+        this.image = "https://static.wikia.nocookie.net/beyblade/images/0/02/Beyblade_Burst_Superking_-_Valt_Aoi.png/revision/latest?cb=20201028224549";
         this.keyword = "bald";
         this.players = [];
         this.atk = 118;
@@ -9,7 +9,7 @@ class AoiValt {
         this.stamina = 8;
         this.receiving = 0;
         this.logs = "The battle started! You have 5 minutes to make Valt bald!\n";
-        this.image2 = "https://static.wikia.nocookie.net/beyblade/images/6/6d/Beyblade_Burst_Sparking_Valt_Aoi.png/revision/latest/scale-to-width-down/300?cb=20200408004719";
+        this.image2 = "https://static.wikia.nocookie.net/beyblade/images/0/02/Beyblade_Burst_Superking_-_Valt_Aoi.png/revision/latest?cb=20201028224549";
         this.users = [];
         this.rewards = "16 EXPs and <:valtz:863052675968925716>1200.";
         this.ongoing = true;

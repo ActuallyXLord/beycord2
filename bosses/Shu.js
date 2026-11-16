@@ -1,7 +1,7 @@
 class KurenaiShu {
     constructor(){
         this.name = "Kurenai Shu";
-        this.image = "https://cdn.discordapp.com/attachments/692234599350140961/766540105677668362/shu_boss.png";
+        this.image = "https://static.wikia.nocookie.net/beyblade/images/8/8c/Beyblade_Burst_God_-_Red_Eye.png/revision/latest?cb=20190924114851";
         this.keyword = "shoe";
         this.players = [];
         this.atk = 100;
@@ -9,7 +9,7 @@ class KurenaiShu {
         this.stamina = 6;
         this.receiving = 0;
         this.logs = "The battle started! You have 5 minutes to kil- I mean beat Shu!\n";
-        this.image2 = "https://static.wikia.nocookie.net/beyblade/images/9/9e/Beyblade_Burst_Shu_Kurenai.png/revision/latest/scale-to-width-down/552?cb=20191102221531";
+        this.image2 = "https://static.wikia.nocookie.net/beyblade/images/8/8c/Beyblade_Burst_God_-_Red_Eye.png/revision/latest?cb=20190924114851";
         this.users = [];
         this.rewards = "15 EXPs and <:valtz:863052675968925716>800.";
         this.ongoing = true;

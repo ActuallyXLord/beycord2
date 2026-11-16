@@ -1,7 +1,7 @@
 class StarFatinum {
     constructor(){
         this.name = "Star Fatinum";
-        this.image = "https://cdn.discordapp.com/attachments/570128363700617218/749435542264873100/unknown.png";
+        this.image = "https://static.wikia.nocookie.net/jjba/images/0/06/Star_Platinum_The_World.png/revision/latest?cb=20150610162343";
         this.keyword = "ora";
         this.players = [];
         this.atk = 138;
@@ -9,7 +9,7 @@ class StarFatinum {
         this.stamina = Infinity;
         this.receiving = 0;
         this.logs = "The battle started! You have 5 minutes to destroy Star Fatinum! WRYYYYY!!\n";
-        this.image2 = "https://cdn.discordapp.com/attachments/744397864813330473/749416329529917511/1598745130639.png";
+        this.image2 = "https://static.wikia.nocookie.net/jjba/images/0/06/Star_Platinum_The_World.png/revision/latest?cb=20150610162343";
         this.users = [];
         this.rewards = "a Star Platinum avatar item, 25 EXPs and <:valtz:863052675968925716>2000.";
         this.ongoing = true;
