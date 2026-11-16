@@ -10,10 +10,11 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
         let quest = stats.quests[qindex];
         let questname;
         switch (quest.name) {
-            case 'Level up a Bey once': questname = "LevelUpABeyOnce";
-            case 'Win 3 battles': questname = "Win3Battles";
-            case 'Win 5 battles': questname = "Win5Battles";
+            case 'Level up a Bey once': questname = "LevelUpABeyOnce"; break;
+            case 'Win 3 battles': questname = "Win3Battles"; break;
+            case 'Win 5 battles': questname = "Win5Battles"; break;
         }
+        if(!client.quests.get(questname)) return message.reply("I don't recognise that quest type.");
         let questc = new (client.quests.get(questname))();
         if(quest.completed){
             message.channel.createMessage(`Quest completed! You received ${quest.rewards}!`)
