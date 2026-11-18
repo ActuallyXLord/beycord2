@@ -1,13 +1,15 @@
 module.exports.run = async (client, message, args, prefix, player, db) => {
   if(message.author.id !== process.env.ownerID) return;
   const bosses = Array.from(client.bosses.values());
+  const fast = args[0] && args[0].toLowerCase() === "now";
+  if(fast) args.shift();
   let chosen;
   if(args[0]){
     const q = args.join(" ").toLowerCase().replace(/[^a-z0-9]/g, "");
     chosen = bosses.find(B => new B().name.toLowerCase().replace(/[^a-z0-9]/g, "").includes(q));
     if(!chosen) return message.channel.createMessage("Unknown boss. Available: " + bosses.map(B => new B().name).join(", "));
   }
-  client.bosssystems.get("bosssystem").run(client, message, prefix, null, db, chosen).catch(err => {
+  client.bosssystems.get("bosssystem").run(client, message, prefix, null, db, chosen, fast).catch(err => {
     console.error("Boss spawn failed:", err);
     message.channel.createMessage("Boss spawn failed: " + err.message);
   });
