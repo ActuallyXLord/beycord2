@@ -97,16 +97,14 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
     const sp = (ai.bey.specials || [])[0];
     let ok = false;
     try { ok = sp && sp.requires(ai, other, logger); } catch(e) { ok = false; }
-    const smart = !opponent2.pve || ["Hard", "Nightmare"].includes(opponent2.pve.difficulty);
-    if(!smart){
-      if(ok && Math.random() < 0.4) return "special";
-      return ["attack", "attack", "spin", "defend"][Math.floor(Math.random() * 4)];
-    }
-    if(ok && Math.random() < 0.7) return "special";
+    // How well the bot manages itself, by difficulty (plain AI battles count as Hard).
+    const skill = opponent2.pve ? ({Easy: 0.6, Normal: 0.8, Hard: 0.95, Nightmare: 1})[opponent2.pve.difficulty] || 0.8 : 0.95;
     const r = Math.random();
-    if(ai.stamina < 3 && r < 0.5) return "spin";
-    if(ai.stability < 35 && r < 0.6) return "defend";
-    if(sp && ai.sp < 2 && r < 0.25) return "charge";
+    // Every round costs about 1.5 stamina, so below 3 the bot has to spin or it loses by survivor.
+    if(ai.stamina < 3 && Math.random() < skill) return "spin";
+    if(ai.stability < 30 && Math.random() < skill) return "defend";
+    if(ok && Math.random() < (skill > 0.9 ? 0.7 : 0.4)) return "special";
+    if(skill > 0.9 && sp && ai.sp < 2 && r < 0.25) return "charge";
     return ["attack", "attack", "spin", "defend"][Math.floor(Math.random() * 4)];
   };
   const nm = p => (p === opponent1 ? member1.effectiveName : member2.effectiveName);
