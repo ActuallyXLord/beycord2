@@ -6,10 +6,10 @@ const COOLDOWN = 3 * 60 * 1000;
 // weight = how often it rolls, offset = opponent level relative to the player's bey,
 // mult = reward multiplier
 const DIFFICULTIES = [
-  {name: "Easy", weight: 40, offset: -3, mult: 1},
-  {name: "Normal", weight: 35, offset: 0, mult: 1.5},
-  {name: "Hard", weight: 18, offset: 5, mult: 2.5},
-  {name: "Nightmare", weight: 7, offset: 12, mult: 4}
+  {name: "Easy", weight: 40, offset: -6, mult: 1},
+  {name: "Normal", weight: 35, offset: -2, mult: 1.5},
+  {name: "Hard", weight: 18, offset: 3, mult: 2.5},
+  {name: "Nightmare", weight: 7, offset: 10, mult: 4}
 ];
 const RARITIES = [
   {name: "Common", weight: 33, mult: 1, pool: "commonbeys"},
@@ -41,7 +41,9 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
     return message.reply(`your bey is still recovering. Hunt again in **${Math.floor(left / 60000)}m ${Math.ceil((left % 60000) / 1000)}s**.`);
   }
 
-  const diff = roll(DIFFICULTIES);
+  // Owner-only: `;hunt hard` forces a difficulty (for testing).
+  const forced = message.author.id === process.env.ownerID && args[0] ? DIFFICULTIES.find(d => d.name.toLowerCase() === args[0].toLowerCase()) : null;
+  const diff = forced || roll(DIFFICULTIES);
   const rar = roll(RARITIES);
   const pool = Array.from((client[rar.pool] || new Map()).keys()).filter(n => client.beys.has(n));
   if(!pool.length) return message.reply("no opponents are available right now. Try again later.");
