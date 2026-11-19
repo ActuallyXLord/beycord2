@@ -45,5 +45,5 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
 
 module.exports.help = {
   name: "work",
-  aliases: ["job"]
+  aliases: ["job", "w"]
 };
