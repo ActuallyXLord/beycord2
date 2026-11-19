@@ -63,7 +63,7 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
       {label: "Defend", description: "Increases your stability.", value: 'defend'},
       {label: "Charge", description: "Charges your special move.", value: 'charge'},
       {label: "Special", description: "Use your bey's special move (needs energy).", value: 'special'}
-    ]).setMaxValues(1))
+    ].concat(opponent2.pve && opponent2.pve.dummy ? [{label: "End Training", description: "Stop the training session.", value: 'endtraining'}] : [])).setMaxValues(1))
   let embed = new Discord.MessageEmbed()
   .setTitle(`${member1.effectiveName} <:versus:898767596940308530> ${member2.effectiveName}`)
   .setColor("#7f7fff")
@@ -94,6 +94,7 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
   
   const AI_ID = "827343111234519040";
   const aiPick = (ai, other) => {
+    if(ai.pve && ai.pve.dummy) return "idle"; // training dummy never acts
     const sp = (ai.bey.specials || [])[0];
     let ok = false;
     try { ok = sp && sp.requires(ai, other, logger); } catch(e) { ok = false; }
@@ -182,6 +183,14 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
     be.ended = true;
     client.removeListener('interactionCreate', onInteraction);
     clearTimeout(idleTimer);
+    if(opponent2.pve && opponent2.pve.dummy){
+      state = "Training ended";
+      refresh(true);
+      player.collection("users").updateOne({_id: opponent1.id}, {$set: {"states.inBattle": false}}).catch(err => console.error(err));
+      fs.unlink(`/tmp/tempimages/${opponent1.id}-${opponent2.id}.png`, () => {});
+      message.channel.createMessage(finish === "cancel" ? `<@${opponent1.id}> ended the training session.` : finish === "time-out" ? "Training session ended because nobody responded." : `Training session over, <@${opponent1.id}>'s bey ran out by ${finish}.`).catch(err => console.error(err));
+      return;
+    }
     if(finish !== "time-out" && finish !== "cancel") state = `Finished: <@${winner.id}> won by ${finish}`;
     refresh(true);
     if(opponent2.pve && finish !== "time-out" && finish !== "cancel"){
@@ -261,6 +270,11 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
     if(uid !== opponent1.id && uid !== opponent2.id) return interaction.createMessage({content: "This isn't your battle.", flags: 64}).catch(() => {});
     const me = uid === opponent1.id ? opponent1 : opponent2;
     const foe = me === opponent1 ? opponent2 : opponent1;
+    if(interaction.data.values[0] === "endtraining"){
+      if(!(opponent2.pve && opponent2.pve.dummy) || uid !== opponent1.id) return ack();
+      ack();
+      return end(opponent1, opponent2, "cancel", player);
+    }
     if(me.move) return interaction.createMessage({content: "You already picked a move, waiting for your opponent.", flags: 64}).catch(() => {});
     const choice = interaction.data.values[0];
     if(choice === "special"){
@@ -360,6 +374,10 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
       try{ d.boost(opponent2, opponent1, logger); }catch(err){ console.error(err); }
     }
   });
+  if(opponent2.pve && opponent2.pve.dummy){
+    const dh = Math.round(opponent2.maxhp - opponent2.hp), ds = Math.round(opponent2.maxstability - opponent2.stability), dst = Math.round((opponent2.maxstamina - opponent2.stamina) * 10) / 10;
+    logger.add(`Dummy took **${Math.max(0, dh)}** HP damage, **${Math.max(0, ds)}** stability damage, **${Math.max(0, dst)}** stamina damage this round.`);
+  }
   opponent1.stamina -= 1.2;
   opponent2.stamina -= 1.2;
   opponent1.stability -= 8;
@@ -383,6 +401,14 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
       opponent2.stamina -= 0.2;
       opponent2.stability -= 1;
     break;
+  }
+  if(opponent2.pve && opponent2.pve.dummy){
+    opponent2.hp = opponent2.maxhp;
+    opponent2.stamina = opponent2.maxstamina;
+    opponent2.stability = opponent2.maxstability;
+    // practice mode: your own bey doesn't run out of spin or stability either, so you can chain charges and specials
+    opponent1.stamina = Math.max(opponent1.stamina, Math.min(opponent1.maxstamina, 4));
+    opponent1.stability = Math.max(opponent1.stability, 60);
   }
   refresh();
   if(opponent1.stability <= 0){
@@ -570,6 +596,13 @@ module.exports.run = async (client, message, args, player, prefix, opponent1, op
   if(opponent1.sd === "Left") opponent1.stamina = opponent1.stamina + 1;
   if(opponent2.sd === "Right") opponent2.atk = opponent2.atk + 2;
   if(opponent2.sd === "Left") opponent2.stamina = opponent2.stamina + 1;
+  opponent1.maxstability = 100;
+  opponent2.maxstability = 100;
+  if(pve && pve.dummy){
+    opponent2.bey.passives = [];
+    opponent2.bey.specials = [];
+    opponent2.bey.modes = [];
+  }
   opponent1.maxstamina = opponent1.stamina;
   opponent2.maxstamina = opponent2.stamina;
   opponent1.maxhp = opponent1.hp;
