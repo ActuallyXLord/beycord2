@@ -205,7 +205,7 @@ client.on('messageCreate', async (message) => {
         } else {
             exp = crntbey.xp+random(1,20)
         }
-        let levelNew = Math.floor(exp/300);
+        let levelNew = Math.min(100, Math.floor(exp/300) + 1); // level L covers xp (L-1)*300 to L*300, same as claim.js, gift.js and ;info
         let staramount = random(0,2);
         function updateLevel(){
             if(levelNew>crntbey.level){
