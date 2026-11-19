@@ -106,23 +106,23 @@ for (const file of partFiles) {
 }
 
 //Rarities System
-["WildWyvern","AceDragon","ArcBahamut","UnionAchilles","DrigerSlash","Odin","Neptune","BlazeRagnaruk","SurtrS2","StormSpriggan","KaiserKerbeus","XenoXcalibur","BeastBehemoth","WizardFafnir","OrpheusO2","BushinAshura","GeistFafnir","ZillionZeus","Yggdrasil","InfernoIfrit"].forEach(file =>{
+["WildWyvern","AceDragon","ArcBahamut","UnionAchilles","DrigerSlash","Odin","Neptune","BlazeRagnaruk","SurtrS2","StormSpriggan","KaiserKerbeus","XenoXcalibur","BeastBehemoth","WizardFafnir","OrpheusO2","BushinAshura","GeistFafnir","ZillionZeus","Yggdrasil","InfernoIfrit","Caynox","DragoonFantom","Nepstrius","Roktavor","Treptune","Valtryek","Xcalius"].forEach(file =>{
     const bey1 = require(`./beys/${file}`);
     const beyc1 = new bey1("1","1");
     client.commonbeys.set(beyc1.name, bey1);
-    ["JudgementJoker","ScrewTrident","Wyvern","BusterXcalibur","HyrusH2","Kerbeus","KillerDeathscyther","Evileye","ChoZValkyrie","NightmareLonginus","Spriggan","RevivePhoenix","SiegXcalibur","RockLeone","DracielShield","Xcalibur","DeadPhoenix", "LostLonginus"].forEach(file =>{
+    ["JudgementJoker","ScrewTrident","Wyvern","BusterXcalibur","HyrusH2","Kerbeus","KillerDeathscyther","Evileye","ChoZValkyrie","NightmareLonginus","Spriggan","RevivePhoenix","SiegXcalibur","RockLeone","DracielShield","Xcalibur","DeadPhoenix", "LostLonginus","Doomscizor","Evipero","Odax","Spryzen","Unicrest","Wyvron","Yegdrion"].forEach(file =>{
         const bey2 = require(`./beys/${file}`);
         const beyc2 = new bey2("1","1");
         client.specialbeys.set(beyc2.name, bey2);
-        ["UnlockUnicorn","MaximusGaruda","KreisSatan","GalaxyZeus","DeadHades","VenomDiabolos","IstrosI2","DeepChaos","ExceedEvileye","AcidAnubis","LegendSpriggan","DarkDeathscyther","HellSalamander","GaiaDragoon","ZAchilles","TornadoWyvern","StormPegasus","GodValkyrie","Ragnaruk"].forEach(file =>{
+        ["UnlockUnicorn","MaximusGaruda","KreisSatan","GalaxyZeus","DeadHades","VenomDiabolos","IstrosI2","DeepChaos","ExceedEvileye","AcidAnubis","LegendSpriggan","DarkDeathscyther","HellSalamander","GaiaDragoon","ZAchilles","TornadoWyvern","StormPegasus","GodValkyrie","Ragnaruk","AtlasAnubionA2","BeastBetromothB2","FerroFengriffF2","GigaGaianonG2","JumboJormuntorJ2","KingKerbeusK2","StormSpryzenS2","XenoXcaliusX2","YugenYegdrionY2","ZillionZeutronZ2"].forEach(file =>{
             const bey3 = require(`./beys/${file}`);
             const beyc3 = new bey3("1","1");
             client.rarebeys.set(beyc3.name, bey3);
-            ["VictoryValkyrie","DragoonStorm","NovaNeptune","ShelterRegulus","LightningLDrago","GuardianKerbeus","BloodyLonginus","EarthAquila","YaegerYggdrasil","Trident","TyrosT2","MadMinoboros","KingKerbeus","Unicorn","DranzerSpiral","ObeliskOdin","Deathscyther","ChoZSpriggan","PsychicPhantom"].forEach(file =>{
+            ["VictoryValkyrie","DragoonStorm","NovaNeptune","ShelterRegulus","LightningLDrago","GuardianKerbeus","BloodyLonginus","EarthAquila","YaegerYggdrasil","Trident","TyrosT2","MadMinoboros","KingKerbeus","Unicorn","DranzerSpiral","ObeliskOdin","Deathscyther","ChoZSpriggan","PsychicPhantom","DarkDoomscizorD2","EpicEviperoE2","InfernoIfritorI2","NovaNepstriusN2","QuillQuetzikoQ2"].forEach(file =>{
                 const bey4 = require(`./beys/${file}`);
                 const beyc4 = new bey4("1","1");
                 client.legendarybeys.set(beyc4.name, bey4);
-                ["GigantGaia","DrainFafnir","JailJormungand","SpryzenRequiem","HolyHorusood","SlashValkyrie","RisingRagnaruk","BeatKukulcan","FlameSagittario","Valkyrie","DiomedesD2","BlastJinnius","Minoboros","PrimeApocalypse","Horusood","WinningValkyrie","Chaos","FangFenrir","StrikeGodValkyrie"].forEach(file =>{
+                ["GigantGaia","DrainFafnir","JailJormungand","SpryzenRequiem","HolyHorusood","SlashValkyrie","RisingRagnaruk","BeatKukulcan","FlameSagittario","Valkyrie","DiomedesD2","BlastJinnius","Minoboros","PrimeApocalypse","Horusood","WinningValkyrie","Chaos","FangFenrir","StrikeGodValkyrie","HyperHorusoodH2","OmniOdaxO2","UberUnicrestU2","VictoryValtryekV2"].forEach(file =>{
                     const bey5 = require(`./beys/${file}`);
                     const beyc5 = new bey5("1","1");
                     client.shadowbeys.set(beyc5.name, bey5);
@@ -163,15 +163,15 @@ client.on('messageCreate', async (message) => {
     if(testForNumber === 0){
         let available;
         if(raritytest >= 20){
-            available = ["Wild Wyvern","Ace Dragon","Arc Bahamut","Union Achilles","Driger Slash","Odin","Neptune","Blaze Ragnaruk","Surtr S2","Storm Spriggan","Kaiser Kerbeus","Xeno Xcalibur","Beast Behemoth","Wizard Fafnir","Orpheus O2","Bushin Ashura","Geist Fafnir","Zillion Zeus","Yggdrasil","Inferno Ifrit"];
+            available = ["Wild Wyvern","Ace Dragon","Arc Bahamut","Union Achilles","Driger Slash","Odin","Neptune","Blaze Ragnaruk","Surtr S2","Storm Spriggan","Kaiser Kerbeus","Xeno Xcalibur","Beast Behemoth","Wizard Fafnir","Orpheus O2","Bushin Ashura","Geist Fafnir","Zillion Zeus","Yggdrasil","Inferno Ifrit","Caynox","Dragoon Fantom","Nepstrius","Roktavor","Treptune","Valtryek","Xcalius"];
         } else if(raritytest >= 10){
-            available = ["Judgement Joker","Screw Trident","Wyvern","Buster Xcalibur","Hyrus H2","Kerbeus","Killer Deathscyther","Evileye","ChoZ Valkyrie","Nightmare Longinus","Spriggan","Revive Phoenix","Sieg Xcalibur","Rock Leone","Draciel Shield","Xcalibur","Dead Phoenix", "Lost Longinus"];
+            available = ["Judgement Joker","Screw Trident","Wyvern","Buster Xcalibur","Hyrus H2","Kerbeus","Killer Deathscyther","Evileye","ChoZ Valkyrie","Nightmare Longinus","Spriggan","Revive Phoenix","Sieg Xcalibur","Rock Leone","Draciel Shield","Xcalibur","Dead Phoenix", "Lost Longinus","Doomscizor","Evipero","Odax","Spryzen","Unicrest","Wyvron","Yegdrion"];
         } else if(raritytest >= 5){
-            available = ["Unlock Unicorn","Maximus Garuda","Kreis Satan","Galaxy Zeus","Dead Hades","Venom Diabolos","Istros I2","Deep Chaos","Exceed Evileye","Acid Anubis","Legend Spriggan","Dark Deathscyther","Hell Salamander","Gaia Dragoon","Z Achilles","Tornado Wyvern","Storm Pegasus","God Valkyrie","Ragnaruk"];
+            available = ["Unlock Unicorn","Maximus Garuda","Kreis Satan","Galaxy Zeus","Dead Hades","Venom Diabolos","Istros I2","Deep Chaos","Exceed Evileye","Acid Anubis","Legend Spriggan","Dark Deathscyther","Hell Salamander","Gaia Dragoon","Z Achilles","Tornado Wyvern","Storm Pegasus","God Valkyrie","Ragnaruk","Atlas Anubion A2","Beast Betromoth B2","Ferro Fengriff F2","Giga Gaianon G2","Jumbo Jormuntor J2","King Kerbeus K2","Storm Spryzen S2","Xeno Xcalius X2","Yugen Yegdrion Y2","Zillion Zeutron Z2"];
         } else if(raritytest >= 3){
-            available = ["Victory Valkyrie","Dragoon Storm","Nova Neptune","Shelter Regulus","Lightning L Drago","Guardian Kerbeus","Bloody Longinus","Earth Aquila","Yaeger Yggdrasil","Trident","Tyros T2","Mad Minoboros","King Kerbeus","Unicorn","Dranzer Spiral","Obelisk Odin","Deathscyther","ChoZ Spriggan","Psychic Phantom"];
+            available = ["Victory Valkyrie","Dragoon Storm","Nova Neptune","Shelter Regulus","Lightning L Drago","Guardian Kerbeus","Bloody Longinus","Earth Aquila","Yaeger Yggdrasil","Trident","Tyros T2","Mad Minoboros","King Kerbeus","Unicorn","Dranzer Spiral","Obelisk Odin","Deathscyther","ChoZ Spriggan","Psychic Phantom","Dark Doomscizor D2","Epic Evipero E2","Inferno Ifritor I2","Nova Nepstrius N2","Quill Quetziko Q2"];
         } else if(raritytest >= 0){
-            available = ["Gigant Gaia","Drain Fafnir","Jail Jormungand","Spryzen Requiem","HolyHorusood","Slash Valkyrie","Rising Ragnaruk","Beat Kukulcan","Flame Sagittario","Valkyrie","Diomedes D2","Blast Jinnius","Minoboros","Prime Apocalypse","Horusood","Winning Valkyrie","Chaos","Fang Fenrir","Strike God Valkyrie"];
+            available = ["Gigant Gaia","Drain Fafnir","Jail Jormungand","Spryzen Requiem","HolyHorusood","Slash Valkyrie","Rising Ragnaruk","Beat Kukulcan","Flame Sagittario","Valkyrie","Diomedes D2","Blast Jinnius","Minoboros","Prime Apocalypse","Horusood","Winning Valkyrie","Chaos","Fang Fenrir","Strike God Valkyrie","Hyper Horusood H2","Omni Odax O2","Uber Unicrest U2","Victory Valtryek V2"];
     }
     client.spawns.get('spawnsystem').run(message, prefix, db, available, client);
     }
