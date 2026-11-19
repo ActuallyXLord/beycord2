@@ -12,22 +12,32 @@ class GloryValkyrie extends Beyblade {
     );
     const say = (logger, text) => { try { if (logger && typeof logger.add === "function") logger.add(text); } catch (e) {} };
 
-    // Special: Spring Rebound (same spring-blade gimmick as God Valkyrie's Jet Bound Launch).
-    // Needs 2 charges. Rebounds off the stadium walls for a hard hit, refunds stamina and shakes the opponent.
+    // Special: Chrono Tempest. Needs 2 charges. The flagship attack: a storm of rapid strikes for heavy damage.
     this.specials = [{
-      name: "Spring Rebound",
+      name: "Chrono Tempest",
       requires: function (e, t, s) { return e.sp >= 2; },
       execute: function (e, t, s) {
-        const dmg = Math.round(35 + (e.lvl || 1) * 0.3);
+        const dmg = Math.round(65 + (e.lvl || 1) * 0.5);
         t.hp -= dmg;
-        t.stability -= 8;
-        e.stamina = Math.min(10, e.stamina + 1);
+        t.stability -= 12;
         e.sp -= 2;
-        say(s, `[${e.username}] Glory Valkyrie used **Spring Rebound**: it bounced off the walls on its spring blades for ${dmg} damage and kept its spin.`);
+        say(s, `[${e.username}] Glory Valkyrie unleashed **Chrono Tempest** for ${dmg} damage.`);
       }
     }];
 
-    this.passives = [];
+    // Passive: Spring Rebound. Every 14 seconds it rebounds off the stadium wall on its spring blades and hits the opponent.
+    this.passives = [{
+      name: "Spring Rebound",
+      requires: function (e, t, s) { return t.hp > 0; },
+      execute: function (e, t, s) {
+        const dmg = Math.round(14 + (e.lvl || 1) * 0.2);
+        t.hp -= dmg;
+        t.stability -= 3;
+        say(s, `[${e.username}] Glory Valkyrie rebounded off the wall with **Spring Rebound** for ${dmg} damage.`);
+      },
+      cd: 14000
+    }];
+
     this.modes = [];
     this.sd = 0;
     this.sdchangable = false;
