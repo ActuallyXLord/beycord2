@@ -98,7 +98,7 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
     let ok = false;
     try { ok = sp && sp.requires(ai, other, logger); } catch(e) { ok = false; }
     // How well the bot manages itself, by difficulty (plain AI battles count as Hard).
-    const skill = opponent2.pve ? ({Easy: 0.25, Normal: 0.5, Hard: 0.85, Nightmare: 1})[opponent2.pve.difficulty] || 0.5 : 0.95;
+    const skill = opponent2.pve ? ({Easy: 0.25, Normal: 0.5, Hard: 0.85, Nightmare: 1, Boss: 1})[opponent2.pve.difficulty] || 0.5 : 0.95;
     const r = Math.random();
     // Every round costs about 1.5 stamina, so below 3 the bot has to spin or it loses by survivor.
     if(ai.stamina < 3 && Math.random() < skill) return "spin";
@@ -188,14 +188,14 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
       const p = opponent2.pve;
       const won = winner.id === opponent1.id;
       const update = won
-        ? {$set: {"states.inBattle": false}, $inc: {coins: p.coins, xp: p.xp, "hunt.wins": 1}}
+        ? {$set: {"states.inBattle": false}, $inc: Object.assign({coins: p.coins, xp: p.xp, "hunt.wins": 1}, p.gv > 0 ? {gv: p.gv} : {})}
         : {$set: {"states.inBattle": false}, $inc: {xp: p.consolationXp, "hunt.losses": 1}};
       player.collection("users").updateOne({_id: opponent1.id}, update).catch(err => console.error(err));
       const result = new Discord.MessageEmbed()
         .setColor(won ? "#50c878" : "#ff5555")
         .setTitle(won ? `Victory against ${p.label}!` : `${p.label} won this time.`)
         .setDescription(won
-          ? `<@${opponent1.id}> won by ${finish} and earned **${p.coins} Valtz** and **${p.xp} XP**.`
+          ? `<@${opponent1.id}> won by ${finish} and earned **${p.coins} Valtz** and **${p.xp} XP**.${p.gv > 0 ? `\n\nThe ${p.isBoss ? "boss" : "opponent"} dropped **${p.gv} <:premiumvaltz:899373241557209158> Premium Valtz**!` : ""}`
           : `<@${opponent1.id}> lost by ${finish}, but still gained **${p.consolationXp} XP** for the practice.`);
       message.channel.createMessage({embed: result}).catch(err => console.error(err));
       return;

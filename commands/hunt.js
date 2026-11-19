@@ -3,6 +3,12 @@ const Discord = require("discord.js");
 const AI_ID = "827343111234519040";
 const COOLDOWN = 3 * 60 * 1000;
 
+// Premium Valtz drops (users.gv). Chance is checked only on a win: base chance by difficulty, times a rarity bonus.
+const GV_CHANCE = {Easy: 0.01, Normal: 0.02, Hard: 0.05, Nightmare: 0.10, Boss: 0.30};
+const GV_RARITY_BONUS = {Common: 1, Special: 1, Rare: 1.5, Legendary: 2, Shadow: 2};
+const BOSS_CHANCE = 0.06; // chance that a hunt turns into a boss fight
+const BOSS = {name: "Boss", offset: 15, mult: 6};
+
 // weight = how often it rolls, offset = opponent level relative to the player's bey,
 // mult = reward multiplier
 const DIFFICULTIES = [
@@ -19,7 +25,7 @@ const RARITIES = [
   {name: "Shadow", weight: 10, mult: 1.8, pool: "shadowbeys"}
 ];
 const NAMES = ["Rogue Blader", "Street Challenger", "Rival Blader", "Masked Blader", "Wandering Blader", "Arena Veteran"];
-const COLORS = {Easy: "#50c878", Normal: "#ffcf00", Hard: "#ff7600", Nightmare: "#b00020"};
+const COLORS = {Easy: "#50c878", Normal: "#ffcf00", Hard: "#ff7600", Nightmare: "#b00020", Boss: "#7b2cbf"};
 
 function roll(list){
   const total = list.reduce((a, b) => a + b.weight, 0);
@@ -43,21 +49,28 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
 
   // Owner-only: `;hunt hard` forces a difficulty (for testing).
   const forced = message.author.id === process.env.ownerID && args[0] ? DIFFICULTIES.find(d => d.name.toLowerCase() === args[0].toLowerCase()) : null;
-  const diff = forced || roll(DIFFICULTIES);
-  const rar = roll(RARITIES);
+  const bossForced = message.author.id === process.env.ownerID && args[0] && args[0].toLowerCase() === "boss";
+  const bosses = client.bosses ? Array.from(client.bosses.values()) : [];
+  const isBoss = bosses.length > 0 && (bossForced || (!forced && Math.random() < BOSS_CHANCE));
+  const diff = isBoss ? BOSS : (forced || roll(DIFFICULTIES));
+  const rar = isBoss ? RARITIES[3 + Math.floor(Math.random() * 2)] : roll(RARITIES); // bosses use Legendary or Shadow beys
+  const bossInfo = isBoss ? new bosses[Math.floor(Math.random() * bosses.length)]() : null;
   const pool = Array.from((client[rar.pool] || new Map()).keys()).filter(n => client.beys.has(n));
   if(!pool.length) return message.reply("no opponents are available right now. Try again later.");
   const beyName = pool[Math.floor(Math.random() * pool.length)];
   const level = Math.max(1, Math.min(100, mine.level + diff.offset));
   const scale = diff.mult * rar.mult;
   const pve = {
-    label: NAMES[Math.floor(Math.random() * NAMES.length)],
+    label: bossInfo ? bossInfo.name : NAMES[Math.floor(Math.random() * NAMES.length)],
+    isBoss,
     beyName, level,
     difficulty: diff.name, rarity: rar.name,
     coins: Math.round((30 + Math.floor(Math.random() * 21)) * scale),
     xp: Math.round(10 * scale),
-    consolationXp: Math.max(2, Math.round(3 * diff.mult))
+    consolationXp: Math.max(2, Math.round(3 * diff.mult)),
+    gv: 0
   };
+  if(Math.random() < Math.min(0.6, (GV_CHANCE[diff.name] || 0) * (GV_RARITY_BONUS[rar.name] || 1))) pve.gv = isBoss ? 1 + Math.floor(Math.random() * 2) : 1; // decided now, paid out only if the player wins
 
   // Claim the cooldown and the battle slot in one atomic step.
   const claim = await db.collection("users").updateOne(
@@ -68,8 +81,9 @@ module.exports.run = async (client, message, args, prefix, player, db) => {
 
   const intro = new Discord.MessageEmbed()
     .setColor(COLORS[diff.name])
-    .setTitle(`${pve.label} challenges you!`)
-    .setDescription(`**${diff.name}** | **${rar.name}** ${beyName} (Level ${level})\nWin to earn **${pve.coins} Valtz** and **${pve.xp} XP**.`);
+    .setTitle(isBoss ? `BOSS: ${pve.label} appears!` : `${pve.label} challenges you!`)
+    .setDescription(`**${diff.name}** | **${rar.name}** ${beyName} (Level ${level})\nWin to earn **${pve.coins} Valtz** and **${pve.xp} XP**${isBoss ? ", and bosses can drop Premium Valtz" : ""}.`);
+  if(bossInfo && bossInfo.image) intro.setImage(bossInfo.image);
   try{
     await message.channel.createMessage({embed: intro});
     const msg = await client.createMessage(message.channel.id, "Waiting for battle...");
