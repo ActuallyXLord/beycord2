@@ -12,30 +12,35 @@ class MeteoLDrago extends Beyblade {
     );
     const say = (logger, text) => { try { if (logger && typeof logger.add === "function") logger.add(text); } catch (e) {} };
 
-    // Special: Stellar Drain. Needs 2 charges. Steals about a third of the opponent's stamina.
+    // Special: Supreme Flight. Needs 3 charges. L-Drago takes flight and dives on the opponent: huge damage,
+    // a big stability hit, and it steals up to 1.5 stamina on the way.
     this.specials = [{
-      name: "Stellar Drain",
-      requires: function (e, t, s) { return e.sp >= 2; },
+      name: "Supreme Flight",
+      requires: function (e, t, s) { return e.sp >= 3; },
       execute: function (e, t, s) {
-        const stolen = Math.max(1, Math.round(t.stamina * 0.35 * 10) / 10);
-        t.stamina = Math.max(0, t.stamina - stolen);
+        const dmg = Math.round(120 + (e.lvl || 1) * 0.9);
+        const stolen = Math.min(1.5, Math.max(0, t.stamina));
+        t.hp -= dmg;
+        t.stability -= 25;
+        t.stamina -= stolen;
         e.stamina = Math.min(10, e.stamina + stolen);
-        t.stability -= 10;
-        e.sp -= 2;
-        say(s, `[${e.username}] Meteo L-Drago used **Stellar Drain** and stole ${stolen} stamina.`);
+        e.sp -= 3;
+        say(s, `[${e.username}] Meteo L-Drago took flight with **Supreme Flight** and crashed down for ${dmg} damage, stealing ${stolen.toFixed(1)} stamina.`);
       }
     }];
 
-    // Passive: Spin Steal. Every 12 seconds it siphons 0.4 stamina from the opponent.
+    // Passive: Spin Steal. Every 7 seconds it siphons up to 1 stamina from the opponent and regains 8 stability.
     this.passives = [{
       name: "Spin Steal",
       requires: function (e, t, s) { return t.stamina > 0.4; },
       execute: function (e, t, s) {
-        t.stamina -= 0.4;
-        e.stamina = Math.min(10, e.stamina + 0.4);
-        say(s, `[${e.username}] Meteo L-Drago stole 0.4 stamina with **Spin Steal**.`);
+        const stolen = Math.min(1, t.stamina);
+        t.stamina -= stolen;
+        e.stamina = Math.min(10, e.stamina + stolen);
+        e.stability = Math.min(100, e.stability + 8);
+        say(s, `[${e.username}] Meteo L-Drago stole ${stolen.toFixed(1)} stamina and regained 8 stability with **Spin Steal**.`);
       },
-      cd: 12000
+      cd: 7000
     }];
 
     this.modes = [];
