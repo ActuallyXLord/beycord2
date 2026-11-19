@@ -168,6 +168,7 @@ async function awaitMoves(message, opponent1, opponent2, player, prefix, client,
     pair.forEach(([me, foe]) => {
       if(me.move !== "attack") return;
       let dmg = Math.max(1, me.atk);
+      if(typeof foe.bey.damageTaken === "number") dmg = Math.max(1, Math.round(dmg * foe.bey.damageTaken)); // natural defense
       if(foe.move === "defend") dmg = Math.max(1, Math.round(dmg * 0.4));
       foe.hp -= dmg;
       me.stability -= 4;
@@ -541,6 +542,11 @@ module.exports.run = async (client, message, args, player, prefix, opponent1, op
   opponent2.sd = (v => (v === 1 || v === "Left") ? "Left" : "Right")(stats2.beys[stats2.main].sd);
   opponent1.bey = new (client.beys.get(stats1.beys[stats1.main].name))(opponent1.id, stats1.beys[stats1.main].id,stats1.beys[stats1.main]);
   opponent2.bey = new (client.beys.get(stats2.beys[stats2.main].name))(opponent2.id, stats2.beys[stats2.main].id,stats2.beys[stats2.main]);
+  // Mode change: beys with `forms` fight as the type their owner picked with ;form.
+  [[opponent1, stats1], [opponent2, stats2]].forEach(([o, st]) => {
+    const f = st.beys[st.main].form;
+    if(Array.isArray(o.bey.forms) && f && o.bey.forms.includes(f)) o.bey.type = f;
+  });
   opponent1.lvl = stats1.beys[stats1.main].level;
   opponent2.lvl = stats2.beys[stats2.main].level;
   if(opponent2.id === "827343111234519040" && !pve){
@@ -630,6 +636,7 @@ module.exports.run = async (client, message, args, player, prefix, opponent1, op
   if(stats1.launcher !== "default") opponent1.launcher = new (client.items.get(stats1.launcher.name))(stats1.launcher);
   if(stats2.launcher !== "default") opponent2.launcher = new (client.items.get(stats2.launcher.name))(stats2.launcher);
   let logger = new Logger();
+  [opponent1, opponent2].forEach(o => { if(Array.isArray(o.bey.forms) && !o.pve) logger.add(`${o.bey.bbname || o.bey.name} is in **${o.bey.type}** mode.`); });
   countdown(message, opponent1, opponent2, player, prefix, client, msg, logger);
 }
 
