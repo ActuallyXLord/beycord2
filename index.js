@@ -200,11 +200,9 @@ client.on('messageCreate', async (message) => {
         let crntbey = info.beys[info.main];
         let booster1 = client.expboost.get(message.author.id);
         let exp;
-        if(booster1){
-            exp = crntbey.xp+(Math.floor((random(1,20))*1.5))
-        } else {
-            exp = crntbey.xp+random(1,20)
-        }
+        let boostMult = booster1 ? 1.5 : 1;
+        if(info.xpBoost && info.xpBoost.until > Date.now()) boostMult = Math.max(boostMult, info.xpBoost.mult || 2); // ;xpshop boost
+        exp = crntbey.xp+Math.floor(random(1,20)*boostMult);
         let levelNew = Math.min(100, Math.floor(exp/300) + 1); // level L covers xp (L-1)*300 to L*300, same as claim.js, gift.js and ;info
         let staramount = random(0,2);
         function updateLevel(){
