@@ -12,16 +12,16 @@ class MeteorDragoon extends Beyblade {
     );
     const say = (logger, text) => { try { if (logger && typeof logger.add === "function") logger.add(text); } catch (e) {} };
 
-    // Special: Meteor Crash. Needs 2 charges. A very powerful attack that hits hard and shakes the opponent.
+    // Special: Dragonic Overdrive. Needs 2 charges. A very powerful attack that hits hard and shakes the opponent.
     this.specials = [{
-      name: "Meteor Crash",
+      name: "Dragonic Overdrive",
       requires: function (e, t, s) { return e.sp >= 2; },
       execute: function (e, t, s) {
         const dmg = Math.round(70 + (e.lvl || 1) * 0.5);
         t.hp -= dmg;
         t.stability -= 15;
         e.sp -= 2;
-        say(s, `[${e.username}] Meteor Dragoon used **Meteor Crash** and smashed the opponent for ${dmg} damage.`);
+        say(s, `[${e.username}] Meteor Dragoon used **Dragonic Overdrive** and smashed the opponent for ${dmg} damage.`);
       }
     }];
 
