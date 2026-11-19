@@ -25,16 +25,18 @@ class MeteorDragoon extends Beyblade {
       }
     }];
 
-    // Passive: Spin Steal. Every 12 seconds it siphons 0.4 stamina from the opponent.
+    // Passive: Spin Steal. Every 7 seconds it siphons up to 1 stamina from the opponent and regains 8 stability.
     this.passives = [{
       name: "Spin Steal",
       requires: function (e, t, s) { return t.stamina > 0.4; },
       execute: function (e, t, s) {
-        t.stamina -= 0.4;
-        e.stamina = Math.min(10, e.stamina + 0.4);
-        say(s, `[${e.username}] Meteor Dragoon stole 0.4 stamina with **Spin Steal**.`);
+        const stolen = Math.min(1, t.stamina);
+        t.stamina -= stolen;
+        e.stamina = Math.min(10, e.stamina + stolen);
+        e.stability = Math.min(100, e.stability + 8);
+        say(s, `[${e.username}] Meteor Dragoon stole ${stolen.toFixed(1)} stamina and regained 8 stability with **Spin Steal**.`);
       },
-      cd: 12000
+      cd: 7000
     }];
 
     this.modes = [];
