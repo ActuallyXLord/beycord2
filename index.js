@@ -7,30 +7,6 @@ require('dotenv').config();
 const { MongoClient } = require("mongodb");
 const { spawn } = require('child_process');
 const { TIMEOUT } = require('dns');
-// TEMP DIAGNOSTIC v2 (remove after MongoDB connection is fixed). No credentials printed.
-try {
-  const _dns = require('dns'), _net = require('net');
-  const _u = new URL(process.env.MONGOURL);
-  const _host = _u.hostname, _port = Number(_u.port) || 27017;
-  const _t0 = Date.now();
-  const L = (m) => console.log('[netcheck +' + (Date.now() - _t0) + 'ms] ' + m);
-  L('host=' + _host + ' port=' + _port + ' node=' + process.version + ' resolvers=' + JSON.stringify(_dns.getServers()));
-  _dns.lookup(_host, { all: true }, (e, a) => L('lookup(private host): ' + (e ? 'ERR ' + (e.code || e.message) : JSON.stringify(a))));
-  _dns.resolve4(_host, (e, a) => L('resolve4: ' + (e ? 'ERR ' + (e.code || e.message) : JSON.stringify(a))));
-  _dns.resolve6(_host, (e, a) => L('resolve6: ' + (e ? 'ERR ' + (e.code || e.message) : JSON.stringify(a))));
-  _dns.lookup('google.com', (e, a) => L('lookup(google.com): ' + (e ? 'ERR ' + (e.code || e.message) : a)));
-  _dns.lookup(_host, { all: true }, (e, addrs) => {
-    (addrs || []).forEach((x) => {
-      const t1 = Date.now();
-      const sock = _net.connect({ host: x.address, port: _port, family: x.family, timeout: 8000 });
-      sock.on('connect', () => { L('tcp OK ' + x.address + ' in ' + (Date.now() - t1) + 'ms'); sock.destroy(); });
-      sock.on('timeout', () => { L('tcp TIMEOUT ' + x.address); sock.destroy(); });
-      sock.on('error', (er) => L('tcp ERROR ' + x.address + ' ' + (er.code || er.message)));
-    });
-  });
-  let _n = 0; const _iv = setInterval(() => { L('heartbeat ' + (++_n)); if (_n >= 6) clearInterval(_iv); }, 5000);
-} catch (e) { console.log('[netcheck] failed to run', e.message); }
-
 const mongo = new MongoClient(process.env.MONGOURL, {useUnifiedTopology: true});
 
 //Mongo on Connect
@@ -130,31 +106,33 @@ for (const file of partFiles) {
 }
 
 //Rarities System
-["WildWyvern","AceDragon","ArcBahamut","UnionAchilles","DrigerSlash","Odin","Neptune","BlazeRagnaruk","SurtrS2","StormSpriggan","KaiserKerbeus","XenoXcalibur","BeastBehemoth","WizardFafnir","OrpheusO2","BushinAshura","GeistFafnir","ZillionZeus","Yggdrasil","InfernoIfrit","Caynox","DragoonFantom","Nepstrius","Roktavor","Treptune","Valtryek","Xcalius","DragoonFighter","DuoAeclipse","DuoArtemis","ShadowOrichalcum"].forEach(file =>{
-    const bey1 = require(`./beys/${file}`);
-    const beyc1 = new bey1("1","1");
-    client.commonbeys.set(beyc1.name, bey1);
-    ["JudgementJoker","ScrewTrident","Wyvern","BusterXcalibur","HyrusH2","Kerbeus","KillerDeathscyther","Evileye","ChoZValkyrie","NightmareLonginus","Spriggan","RevivePhoenix","SiegXcalibur","RockLeone","DracielShield","Xcalibur","DeadPhoenix", "LostLonginus","Doomscizor","Evipero","Odax","Spryzen","Unicrest","Wyvron","Yegdrion","DranzerFlame","DuoApollos","Orichalcum"].forEach(file =>{
-        const bey2 = require(`./beys/${file}`);
-        const beyc2 = new bey2("1","1");
-        client.specialbeys.set(beyc2.name, bey2);
-        ["UnlockUnicorn","MaximusGaruda","KreisSatan","GalaxyZeus","DeadHades","VenomDiabolos","IstrosI2","DeepChaos","ExceedEvileye","AcidAnubis","LegendSpriggan","DarkDeathscyther","HellSalamander","GaiaDragoon","ZAchilles","TornadoWyvern","StormPegasus","GodValkyrie","Ragnaruk","AtlasAnubionA2","BeastBetromothB2","FerroFengriffF2","GigaGaianonG2","JumboJormuntorJ2","KingKerbeusK2","StormSpryzenS2","XenoXcaliusX2","YugenYegdrionY2","ZillionZeutronZ2","RagingRoktavorR2","WildWyvronW2","BerserkRoktavorR3","DeepCaynoxC3","KineticSatombS3","LostLuinorL2","MadMinoborosM2","MaximusGarudaG3","PhrenicPhantazusP2","ShelterRegulusR3","SurgeXcaliusX3"].forEach(file =>{
-            const bey3 = require(`./beys/${file}`);
-            const beyc3 = new bey3("1","1");
-            client.rarebeys.set(beyc3.name, bey3);
-            ["VictoryValkyrie","DragoonStorm","NovaNeptune","ShelterRegulus","LightningLDrago","GuardianKerbeus","BloodyLonginus","EarthAquila","YaegerYggdrasil","Trident","TyrosT2","MadMinoboros","KingKerbeus","Unicorn","DranzerSpiral","ObeliskOdin","Deathscyther","ChoZSpriggan","PsychicPhantom","DarkDoomscizorD2","EpicEviperoE2","InfernoIfritorI2","NovaNepstriusN2","QuillQuetzikoQ2","AlterCogniteC3","BlastJinniusJ3","DrainFafnirF3","KrusherDoomscizorD3","NightmareLuinorL3","SpryzenRequiemS3","TempestWyvronW3"].forEach(file =>{
-                const bey4 = require(`./beys/${file}`);
-                const beyc4 = new bey4("1","1");
-                client.legendarybeys.set(beyc4.name, bey4);
-                ["GigantGaia","DrainFafnir","JailJormungand","SpryzenRequiem","HolyHorusood","SlashValkyrie","RisingRagnaruk","BeatKukulcan","FlameSagittario","Valkyrie","DiomedesD2","BlastJinnius","Minoboros","PrimeApocalypse","Horusood","WinningValkyrie","Chaos","FangFenrir","StrikeGodValkyrie","HyperHorusoodH2","OmniOdaxO2","UberUnicrestU2","VictoryValtryekV2","ArcBalkeshB3","BoomKhalzarK3","GenesisValtryekV3","LegendSpryzenS3","OrichalcumO3","StrikeValtryekV3","TwinNoctemisN3"].forEach(file =>{
-                    const bey5 = require(`./beys/${file}`);
-                    const beyc5 = new bey5("1","1");
-                    client.shadowbeys.set(beyc5.name, bey5);
-                })
-            })
-        })
-    })
-})
+// Each rarity list is loaded once. (Upstream nested these loops inside each other, which ran the innermost body
+// once per combination of names: ~33 million requires at startup, blocking the event loop for ~38s.)
+["WildWyvern","AceDragon","ArcBahamut","UnionAchilles","DrigerSlash","Odin","Neptune","BlazeRagnaruk","SurtrS2","StormSpriggan","KaiserKerbeus","XenoXcalibur","BeastBehemoth","WizardFafnir","OrpheusO2","BushinAshura","GeistFafnir","ZillionZeus","Yggdrasil","InfernoIfrit","Caynox","DragoonFantom","Nepstrius","Roktavor","Treptune","Valtryek","Xcalius","DragoonFighter","DuoAeclipse","DuoArtemis","ShadowOrichalcum"].forEach(file => {
+    const bey = require(`./beys/${file}`);
+    const beyc = new bey("1","1");
+    client.commonbeys.set(beyc.name, bey);
+});
+["JudgementJoker","ScrewTrident","Wyvern","BusterXcalibur","HyrusH2","Kerbeus","KillerDeathscyther","Evileye","ChoZValkyrie","NightmareLonginus","Spriggan","RevivePhoenix","SiegXcalibur","RockLeone","DracielShield","Xcalibur","DeadPhoenix","LostLonginus","Doomscizor","Evipero","Odax","Spryzen","Unicrest","Wyvron","Yegdrion","DranzerFlame","DuoApollos","Orichalcum"].forEach(file => {
+    const bey = require(`./beys/${file}`);
+    const beyc = new bey("1","1");
+    client.specialbeys.set(beyc.name, bey);
+});
+["UnlockUnicorn","MaximusGaruda","KreisSatan","GalaxyZeus","DeadHades","VenomDiabolos","IstrosI2","DeepChaos","ExceedEvileye","AcidAnubis","LegendSpriggan","DarkDeathscyther","HellSalamander","GaiaDragoon","ZAchilles","TornadoWyvern","StormPegasus","GodValkyrie","Ragnaruk","AtlasAnubionA2","BeastBetromothB2","FerroFengriffF2","GigaGaianonG2","JumboJormuntorJ2","KingKerbeusK2","StormSpryzenS2","XenoXcaliusX2","YugenYegdrionY2","ZillionZeutronZ2","RagingRoktavorR2","WildWyvronW2","BerserkRoktavorR3","DeepCaynoxC3","KineticSatombS3","LostLuinorL2","MadMinoborosM2","MaximusGarudaG3","PhrenicPhantazusP2","ShelterRegulusR3","SurgeXcaliusX3"].forEach(file => {
+    const bey = require(`./beys/${file}`);
+    const beyc = new bey("1","1");
+    client.rarebeys.set(beyc.name, bey);
+});
+["VictoryValkyrie","DragoonStorm","NovaNeptune","ShelterRegulus","LightningLDrago","GuardianKerbeus","BloodyLonginus","EarthAquila","YaegerYggdrasil","Trident","TyrosT2","MadMinoboros","KingKerbeus","Unicorn","DranzerSpiral","ObeliskOdin","Deathscyther","ChoZSpriggan","PsychicPhantom","DarkDoomscizorD2","EpicEviperoE2","InfernoIfritorI2","NovaNepstriusN2","QuillQuetzikoQ2","AlterCogniteC3","BlastJinniusJ3","DrainFafnirF3","KrusherDoomscizorD3","NightmareLuinorL3","SpryzenRequiemS3","TempestWyvronW3"].forEach(file => {
+    const bey = require(`./beys/${file}`);
+    const beyc = new bey("1","1");
+    client.legendarybeys.set(beyc.name, bey);
+});
+["GigantGaia","DrainFafnir","JailJormungand","SpryzenRequiem","HolyHorusood","SlashValkyrie","RisingRagnaruk","BeatKukulcan","FlameSagittario","Valkyrie","DiomedesD2","BlastJinnius","Minoboros","PrimeApocalypse","Horusood","WinningValkyrie","Chaos","FangFenrir","StrikeGodValkyrie","HyperHorusoodH2","OmniOdaxO2","UberUnicrestU2","VictoryValtryekV2","ArcBalkeshB3","BoomKhalzarK3","GenesisValtryekV3","LegendSpryzenS3","OrichalcumO3","StrikeValtryekV3","TwinNoctemisN3"].forEach(file => {
+    const bey = require(`./beys/${file}`);
+    const beyc = new bey("1","1");
+    client.shadowbeys.set(beyc.name, bey);
+});
 
 //MESSAGE ####################################################################################
 
