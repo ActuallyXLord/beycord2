@@ -7,23 +7,28 @@ require('dotenv').config();
 const { MongoClient } = require("mongodb");
 const { spawn } = require('child_process');
 const { TIMEOUT } = require('dns');
-// TEMP DIAGNOSTIC (remove after MongoDB connection is fixed): logs DNS + TCP reachability of the Mongo host. No credentials printed.
+// TEMP DIAGNOSTIC v2 (remove after MongoDB connection is fixed). No credentials printed.
 try {
   const _dns = require('dns'), _net = require('net');
   const _u = new URL(process.env.MONGOURL);
   const _host = _u.hostname, _port = Number(_u.port) || 27017;
-  console.log('[netcheck] host=' + _host + ' port=' + _port + ' node=' + process.version);
-  _dns.lookup(_host, { all: true }, (err, addrs) => {
-    if (err) return console.log('[netcheck] dns error', err.code || err.message);
-    console.log('[netcheck] dns', JSON.stringify(addrs));
-    (addrs || []).forEach((a) => {
-      const t0 = Date.now();
-      const sock = _net.connect({ host: a.address, port: _port, family: a.family, timeout: 8000 });
-      sock.on('connect', () => { console.log('[netcheck] tcp OK ' + a.address + ' in ' + (Date.now() - t0) + 'ms'); sock.destroy(); });
-      sock.on('timeout', () => { console.log('[netcheck] tcp TIMEOUT ' + a.address); sock.destroy(); });
-      sock.on('error', (e) => console.log('[netcheck] tcp ERROR ' + a.address + ' ' + (e.code || e.message)));
+  const _t0 = Date.now();
+  const L = (m) => console.log('[netcheck +' + (Date.now() - _t0) + 'ms] ' + m);
+  L('host=' + _host + ' port=' + _port + ' node=' + process.version + ' resolvers=' + JSON.stringify(_dns.getServers()));
+  _dns.lookup(_host, { all: true }, (e, a) => L('lookup(private host): ' + (e ? 'ERR ' + (e.code || e.message) : JSON.stringify(a))));
+  _dns.resolve4(_host, (e, a) => L('resolve4: ' + (e ? 'ERR ' + (e.code || e.message) : JSON.stringify(a))));
+  _dns.resolve6(_host, (e, a) => L('resolve6: ' + (e ? 'ERR ' + (e.code || e.message) : JSON.stringify(a))));
+  _dns.lookup('google.com', (e, a) => L('lookup(google.com): ' + (e ? 'ERR ' + (e.code || e.message) : a)));
+  _dns.lookup(_host, { all: true }, (e, addrs) => {
+    (addrs || []).forEach((x) => {
+      const t1 = Date.now();
+      const sock = _net.connect({ host: x.address, port: _port, family: x.family, timeout: 8000 });
+      sock.on('connect', () => { L('tcp OK ' + x.address + ' in ' + (Date.now() - t1) + 'ms'); sock.destroy(); });
+      sock.on('timeout', () => { L('tcp TIMEOUT ' + x.address); sock.destroy(); });
+      sock.on('error', (er) => L('tcp ERROR ' + x.address + ' ' + (er.code || er.message)));
     });
   });
+  let _n = 0; const _iv = setInterval(() => { L('heartbeat ' + (++_n)); if (_n >= 6) clearInterval(_iv); }, 5000);
 } catch (e) { console.log('[netcheck] failed to run', e.message); }
 
 const mongo = new MongoClient(process.env.MONGOURL, {useUnifiedTopology: true});
