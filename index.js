@@ -7,6 +7,25 @@ require('dotenv').config();
 const { MongoClient } = require("mongodb");
 const { spawn } = require('child_process');
 const { TIMEOUT } = require('dns');
+// TEMP DIAGNOSTIC (remove after MongoDB connection is fixed): logs DNS + TCP reachability of the Mongo host. No credentials printed.
+try {
+  const _dns = require('dns'), _net = require('net');
+  const _u = new URL(process.env.MONGOURL);
+  const _host = _u.hostname, _port = Number(_u.port) || 27017;
+  console.log('[netcheck] host=' + _host + ' port=' + _port + ' node=' + process.version);
+  _dns.lookup(_host, { all: true }, (err, addrs) => {
+    if (err) return console.log('[netcheck] dns error', err.code || err.message);
+    console.log('[netcheck] dns', JSON.stringify(addrs));
+    (addrs || []).forEach((a) => {
+      const t0 = Date.now();
+      const sock = _net.connect({ host: a.address, port: _port, family: a.family, timeout: 8000 });
+      sock.on('connect', () => { console.log('[netcheck] tcp OK ' + a.address + ' in ' + (Date.now() - t0) + 'ms'); sock.destroy(); });
+      sock.on('timeout', () => { console.log('[netcheck] tcp TIMEOUT ' + a.address); sock.destroy(); });
+      sock.on('error', (e) => console.log('[netcheck] tcp ERROR ' + a.address + ' ' + (e.code || e.message)));
+    });
+  });
+} catch (e) { console.log('[netcheck] failed to run', e.message); }
+
 const mongo = new MongoClient(process.env.MONGOURL, {useUnifiedTopology: true});
 
 //Mongo on Connect
